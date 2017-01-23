@@ -1,0 +1,366 @@
+#!/bin/bash
+#############################################
+
+title=""
+
+
+
+
+
+#First put all the relevant data together
+#find the length of result simulated so far
+lenout=`awk 'END{print(NR)}' XBoutput.txt`
+awk -v len=$lenout 'BEGIN{printf("Gamma n beta cf fw smag nuhfac\n")}{if (NR<len){print($0)}}' MDA_final.dat >MDA_final_Head.dat
+paste MDA_final_Head.dat XBoutput.txt > allTog.txt
+
+
+
+
+
+#For each output variables plot 6 graphs
+
+
+
+#start with zscrest
+outfile=ZsCrest.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=7
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"zs Crest" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"zs Crest" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in zs at Reef Crest [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+
+###################################################################################
+###################################################################################
+# Hscrest
+outfile=HsCrest.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=9
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hs Crest" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hs Crest" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hs at Reef Crest [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+
+###################################################################################
+###################################################################################
+# Hicrest
+outfile=HiCrest.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=8
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hig Crest" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hig Crest" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hig at Reef Crest [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+###################################################################################
+###################################################################################
+# zs shore
+outfile=ZsShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=10
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"zs Shore" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"zs Shore" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in zs at the shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+###################################################################################
+###################################################################################
+# Hs shore
+outfile=HsShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=12
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hs Shore" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hs Shore" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hs at the Shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+###################################################################################
+###################################################################################
+# Hi shore
+outfile=HiShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=11
+
+# gamma vs n
+regSP=`gmtinfo Datos_allmod.dat -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hig Shore" -Y8c -X-10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo Datos_allmod.dat -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy Datos_allmod.dat $regSP $prjSP -Sc0.05c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hig Shore" -X10c -K -O >> $outfile
+psxy allTog.txt $regSP $prjSP -Sc0.1c -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hig at the Shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+psconvert -P -TF -FMDA_result.pdf ZsCrest.ps HsCrest.ps HiCrest.ps ZsShore.ps HsShore.ps HiShore.ps
+
+#Plot all spectral in one graphs
+LPfilt=16
+
+filter=c
+
+overlap=1024
+df=`echo 1/${overlap} | bc -l`
+
+filter1d ShoreWL_Measured.txt -F${filter}${LPfilt} -E > Shore_WL-filtered.txt
+spectrum1d Shore_WL-filtered.txt -S${overlap} -i1 -Ndata > measSpec_Long_Shore.txt
+
+regSP=-R0.0003/1/0.0001/25
+regSPT=-R1/3333.333/0.0001/25
+prjSP=-JX15cl/6cl
+prjSPT=-JX-15cl/6cl
+outfile=Shore_LW_Specs.ps
+
+psbasemap $regSPT $prjSPT -Bxa1f3+l"period (s)" -BS -Y3c -K -P> $outfile
+psbasemap  $regSP $prjSP -Bxa1f3+l"frequency (Hz)" -Bya1f3+l"Variance (m@+2@+Hz@+-1@+)" -BWSen -Y1.5c -O -K>> $outfile
+
+for i in `seq 300`
+do
+  #
+  numi=`printf "%03d" ${i} `
+
+  gmtselect MDA_${numi}_Shore.txt -R1023/3072/-5/5 >rawdata.txt
+  ZSShore=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+  HSShore=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+  gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+  gmtmath -T1/2048/1 -N1/0 = samptime.txt
+  sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+  filter1d sampRaw.txt -F${filter}${LPfilt} -E > filtered.txt
+  spectrum1d filtered.txt -S${overlap} -i1 -Ndata > Spec_Long_Shore.txt
+
+  psxy Spec_Long_Shore.txt $regSP $prjSP -W0.5p,200 -O -K >> $outfile
+
+done
+psxy measSpec_Long_Shore.txt $regSP $prjSP -W0.5p,red -O -K >> $outfile
+echo -e "0.04 0.0001 \n 0.04 25\n" | psxy  $regSP $prjSP -W0.5p,black -O -K  >> $outfile
+
+echo -e "0.1 10\n 0.07 10\n" | psxy  $regSP $prjSP -W0.5p,200 -O -K  >> $outfile
+echo "0.1 10 Simulated Spectra" | pstext $regSP $prjSP -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+echo -e "0.1 5\n 0.07 5\n" | psxy  $regSP $prjSP -W0.5p,red -O -K  >> $outfile
+echo "0.1 5 Measured Spectrum" | pstext $regSP $prjSP -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+
+psxy -R -J -T -O >> $outfile
+psconvert -A -P -Tg $outfile

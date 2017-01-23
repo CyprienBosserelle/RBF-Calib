@@ -1,0 +1,122 @@
+#!/bin/bash
+#############################################
+
+#First process the Measured data
+#calculate the mean zs (i.e. used to compare performance on wave setup)
+ZSCMES=`gmtmath CrestWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13)}'`
+# WARNING Removed another 0.3 WL here as expected mean WL is 1.26
+ZSSMES=`gmtmath ShoreWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13-0.3)}'`
+
+
+LPfilt=20
+
+filter=c
+
+overlap=1024
+df=`echo 1/${overlap} | bc -l`
+#echo $df
+# Processing Hig
+#filter1d CrestWL_Measured.txt -F${filter}${LPfilt} -E > filtered.txt
+#spectrum1d filtered.txt -S${overlap} -i1 -Ndata > measSpec_Long_Crest.txt
+#HIGCMES=`gmtmath measSpec_Long_Crest.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -F${filter}${LPfilt} -E > Shore_WL-filtered.txt
+spectrum1d Shore_WL-filtered.txt -S${overlap} -i1 -Ndata > measSpec_Long_Shore.txt
+HIGSMES=`gmtselect measSpec_Long_Shore.txt -R0/0.04/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+echo "Hig-Shore= ${HIGSMES};"
+#processing Hs for short waves
+#filter1d CrestWL_Measured.txt -F${filter}${LPfilt}+h -E > filtered.txt
+#spectrum1d filtered.txt -S${overlap} -i1 -Ndata > measSpec_Short_Crest.txt
+#HSCMES=`gmtmath measSpec_Short_Crest.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -F${filter}${LPfilt}+h -E > Shore_WL-filtered-HP.txt
+filter1d Shore_WL-filtered-HP.txt -Fg4 -E > Shore_WL-filtered-HP3LP.txt
+spectrum1d Shore_WL-filtered-HP3LP.txt -S${overlap} -i1 -Ndata > measSpec_Short_Shore.txt
+#HSSMES=`gmtmath measSpec_Short_Shore.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+
+spectrum1d CrestWL_Measured.txt -S${overlap} -i1 -Ndata > measSpec_All_Crest.txt
+HSCMES=`gmtselect measSpec_All_Crest.txt -R0.04/0.333/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+HIGCMES=`gmtselect measSpec_All_Crest.txt -R0/0.04/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+spectrum1d ShoreWL_Measured.txt -S${overlap} -i1 -Ndata > measSpec_All_Shore.txt
+HSSMES=`gmtselect measSpec_All_Shore.txt -R0.04/0.333/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+HIGSMES=`gmtselect measSpec_All_Shore.txt -R0/0.04/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+i=35
+numi=`printf "%03d" ${i} `
+gmtselect MDA_${numi}_Shore.txt -R1023/3072/-5/5 >rawdata.txt
+ZSShore=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+HSShore=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+gmtmath -T1/2048/1 -N1/0 = samptime.txt
+sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+filter1d sampRaw.txt -F${filter}${LPfilt} -E > filtered.txt
+spectrum1d filtered.txt -S${overlap} -i1 -Ndata > SpecSIM_Long_Shore.txt
+HIGShore=`gmtmath SpecSIM_Long_Shore.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+echo "Hig-Shore-SIM= ${HIGShore};"
+
+
+
+
+echo "Measured data"
+echo "Hs-Crest= ${HSCMES}; Hig-Crest= ${HIGCMES}; zs-mean-Crest= ${ZSCMES};"
+echo "Hs-Shore= ${HSSMES}; Hig-Shore= ${HIGSMES}; zs-mean-Shore= ${ZSSMES};"
+
+region=-R0/2048/0.8/2.0
+proj=-JX15c/5c
+outfile=Shore_Meas_Fig1.ps
+
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+
+psbasemap $region $proj -Bxf128a256+l"Time (s)" -Bya0.2f0.1+l"Water Levels (m ab. MSL)" -BWS -K -P > $outfile
+awk '{printf("%2.2f\t%2.2f\n",$1,$2-10.13-0.3)}' ShoreWL_Measured.txt  | psxy $region $proj -W0.5p,black -O -K >>$outfile
+awk '{printf("%2.2f\t%2.2f\n",$1,$2-10.13-0.3)}' Shore_WL-filtered.txt  | psxy $region $proj -W0.5p,red -O -K >>$outfile
+
+echo -e "1500 1.9\n 1400 1.9\n" | psxy  $region $proj -W0.5p,black -O -K  >> $outfile
+echo "1500 1.9 Raw water levels" | pstext $region $proj -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+echo -e "1500 1.8\n 1400 1.8\n" | psxy $region $proj -W0.5p,red -O -K  >> $outfile
+echo "1500 1.8 Filtered water Level " | pstext $region $proj -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+psxy -R -J -T -O >> $outfile
+psconvert -A -P -Tg $outfile
+
+region=-R0/2048/-0.5/0.5
+proj=-JX15c/5c
+outfile=Shore_Meas_Fig2.ps
+
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+
+psbasemap $region $proj -Bxf128a256+l"Time (s)" -Bya0.2f0.1+l"Wave signal (m)" -BWS -Y7c -K  -P > $outfile
+awk '{printf("%2.2f\t%2.2f\n",$1,$2)}' Shore_WL-filtered-HP.txt| psxy $region $proj -W0.5p,black -O -K >>$outfile
+awk '{printf("%2.2f\t%2.2f\n",$1,$2)}' Shore_WL-filtered-HP3LP.txt  | psxy $region $proj -W0.5p,red -O -K >>$outfile
+
+echo -e "1500 0.45\n 1400 0.45\n" | psxy  $region $proj -W0.5p,black -O -K  >> $outfile
+echo "1500 0.45 Raw wave signal" | pstext $region $proj -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+echo -e "1500 0.35\n 1400 0.35\n" | psxy $region $proj -W0.5p,red -O -K  >> $outfile
+echo "1500 0.35 Filtered wave signal " | pstext $region $proj -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+
+psxy -R -J -T -O >> $outfile
+psconvert -A -P -Tg $outfile
+
+regSP=-R0.0003/1/0.0001/25
+regSPT=-R1/3333.333/0.0001/25
+prjSP=-JX15cl/6cl
+prjSPT=-JX-15cl/6cl
+outfile=Shore_Meas_Fig3.ps
+
+psbasemap $regSPT $prjSPT -Bxa1f3+l"period (s)" -BS -Y3c -K -P> $outfile
+psbasemap  $regSP $prjSP -Bxa1f3+l"frequency (Hz)" -Bya1f3+l"Variance (m@+2@+Hz@+-1@+)" -BWSen -Y1.5c -O -K>> $outfile
+#psxy measSpec_Short_Shore.txt $regSP $prjSP -W0.5p,black -O -K>> $outfile
+psxy measSpec_Long_Shore.txt $regSP $prjSP -W0.5p,red -O -K >> $outfile
+psxy measSpec_All_Shore.txt $regSP $prjSP -W0.5p,blue -O -K >> $outfile
+#psxy SpecSIM_Long_Shore.txt $regSP $prjSP -W0.5p,black -O -K >> $outfile
+
+echo -e "0.04 0.0001 \n 0.04 25\n" | psxy  $regSP $prjSP -W0.5p,black -O -K  >> $outfile
+
+echo -e "0.1 10\n 0.07 10\n" | psxy  $regSP $prjSP -W0.5p,blue -O -K  >> $outfile
+echo "0.1 10 Full Spectra" | pstext $regSP $prjSP -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+echo -e "0.1 5\n 0.07 5\n" | psxy  $regSP $prjSP -W0.5p,red -O -K  >> $outfile
+echo "0.1 5 Long Waves Spectra" | pstext $regSP $prjSP -F+jML+f10p,Helvetica -Dj0.2c -O -K  >> $outfile
+
+psxy -R -J -T -O >> $outfile
+psconvert -A -P -Tg $outfile

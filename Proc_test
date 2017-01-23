@@ -1,0 +1,69 @@
+#!/bin/bash
+#############################################
+
+#First process the Measured data
+#calculate the mean zs (i.e. used to compare performance on wave setup)
+ZSCMES=`gmtmath CrestWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13)}'`
+# WARNING Removed another 0.3 WL here as expected mean WL is 1.26
+ZSSMES=`gmtmath ShoreWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13-0.3)}'`
+# Processing Hig
+filter1d CrestWL_Measured.txt -Fg60 -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > measSpec_Long_Crest.txt
+HIGCMES=`gmtmath measSpec_Long_Crest.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -Fg60 -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > measSpec_Long_Shore.txt
+HIGSMES=`gmtmath measSpec_Long_Shore.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+#processing Hs for short waves
+filter1d CrestWL_Measured.txt -Fg60+h -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > measSpec_Short_Crest.txt
+HSCMES=`gmtmath measSpec_Short_Crest.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -Fg60+h -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > measSpec_Short_Shore.txt
+HSSMES=`gmtmath measSpec_Short_Shore.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+echo "Measured data"
+echo "Hs-Crest= ${HSCMES}; Hig-Crest= ${HIGCMES}; zs-mean-Crest= ${ZSCMES};"
+echo "Hs-Shore= ${HSSMES}; Hig-Shore= ${HIGSMES}; zs-mean-Shore= ${ZSSMES};"
+
+
+
+
+
+outfile=RBF1_Best
+
+
+
+gmtselect ${outfile}_Crest.txt -R1023/3072/-5/5 >rawdata.txt
+ZSCrest=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+HSCrest=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+gmtmath -T1/2048/1 -N1/0 = samptime.txt
+sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+filter1d sampRaw.txt -Fg60 -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > Spec_Long_Crest.txt
+HIGCrest=`gmtmath Spec_Long_Crest.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+
+
+
+
+
+gmtselect ${outfile}_Shore.txt -R1023/3072/-10/10 >rawdata.txt
+ZSShore=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+HSShore=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+gmtmath -T1/2048/1 -N1/0 = samptime.txt
+sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+filter1d sampRaw.txt -Fg60 -E > filtered.txt
+spectrum1d filtered.txt -S2048 -i1 -Ndata > Spec_Long_Shore.txt
+HIGShore=`gmtmath Spec_Long_Shore.txt -C1 SUM 0.0004828 MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+
+
+
+echo "Simulation"
+echo "Hs-Crest= ${HSCrest}; Hig-Crest= ${HIGCrest}; zs-mean-Crest= ${ZSCrest};"
+echo "Hs-Shore= ${HSShore}; Hig-Shore= ${HIGShore}; zs-mean-Shore= ${ZSShore};"

@@ -1,0 +1,99 @@
+#!/bin/bash
+#############################################
+
+#First process the Measured data
+#calculate the mean zs (i.e. used to compare performance on wave setup)
+#First process the Measured data
+#calculate the mean zs (i.e. used to compare performance on wave setup)
+#First process the Measured data
+#calculate the mean zs (i.e. used to compare performance on wave setup)
+ZSCMES=`gmtmath CrestWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13)}'`
+# WARNING Removed another 0.3 WL here as expected mean WL is 1.26
+ZSSMES=`gmtmath ShoreWL_Measured.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2-10.13-0.3)}'`
+
+
+LPfilt=16
+
+filter=c
+
+overlap=1024
+df=`echo 1/${overlap} | bc -l`
+
+# Processing Hig
+filter1d CrestWL_Measured.txt -F${filter}${LPfilt} -E > filtered.txt
+spectrum1d filtered.txt -S${overlap} -i1 -Ndata > measSpec_Long_Crest.txt
+HIGCMES=`gmtmath measSpec_Long_Crest.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -F${filter}${LPfilt} -E > Shore_WL-filtered.txt
+spectrum1d Shore_WL-filtered.txt -S${overlap} -i1 -Ndata > measSpec_Long_Shore.txt
+HIGSMES=`gmtmath measSpec_Long_Shore.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+#processing Hs for short waves
+filter1d CrestWL_Measured.txt -F${filter}${LPfilt}+h -E > filtered.txt
+spectrum1d filtered.txt -S${overlap} -i1 -Ndata > measSpec_Short_Crest.txt
+HSCMES=`gmtmath measSpec_Short_Crest.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+filter1d ShoreWL_Measured.txt -F${filter}${LPfilt}+h -E > Shore_WL-filtered-HP.txt
+filter1d Shore_WL-filtered-HP.txt -Fg4 -E > Shore_WL-filtered-HP3LP.txt
+spectrum1d Shore_WL-filtered-HP3LP.txt -S${overlap} -i1 -Ndata > measSpec_Short_Shore.txt
+HSSMES=`gmtmath measSpec_Short_Shore.txt -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+echo "Measured data"
+echo "Hs-Crest= ${HSCMES}; Hig-Crest= ${HIGCMES}; zs-mean-Crest= ${ZSCMES};"
+echo "Hs-Shore= ${HSSMES}; Hig-Shore= ${HIGSMES}; zs-mean-Shore= ${ZSSMES};"
+
+
+
+echo "DiffZsCrest DiffHigCrest DiffHsCrest DiffZsShore DiffHigShore DiffHsShore" > XBoutput.txt
+
+
+#`seq 100`
+for i in `seq 300`
+do
+  numi=`printf "%03d" ${i} `
+
+
+
+  gmtselect MDA_${numi}_Crest.txt -R1023/3072/-5/5 >rawdata.txt
+  ZSCrest=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+  HSCrest=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+  gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+  gmtmath -T1/2048/1 -N1/0 = samptime.txt
+  sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+  filter1d sampRaw.txt -F${filter}${LPfilt} -E > filtered.txt
+  spectrum1d filtered.txt -S${overlap} -i1 -Ndata > Spec_Long_Crest.txt
+
+  #spectrum1d CrestWL_Measured.txt -S${overlap} -i1 -Ndata > measSpec_All_Crest.txt
+  #HSCMES=`gmtselect measSpec_All_Crest.txt -R0.04/0.333/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+  #HIGCMES=`gmtselect measSpec_All_Crest.txt -R0/0.04/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+
+  #spectrum1d ShoreWL_Measured.txt -S${overlap} -i1 -Ndata > measSpec_All_Shore.txt
+  #HSSMES=`gmtselect measSpec_All_Shore.txt -R0.04/0.333/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+  #HIGSMES=`gmtselect measSpec_All_Shore.txt -R0/0.04/-5/5000000 | gmtmath STDIN -C1 SUM ${df} MUL SQRT 4 MUL  = | awk 'END{printf("%2.2f",$2)}'`
+  HIGCrest=`gmtmath Spec_Long_Crest.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+
+  gmtselect MDA_${numi}_Shore.txt -R1023/3072/-5/5 >rawdata.txt
+  ZSShore=`gmtmath rawdata.txt -C1 MEAN = | awk 'END{printf("%2.2f",$2)}'`
+  HSShore=`gmtmath rawdata.txt -C2 MEAN = | awk 'END{printf("%2.2f",$3*1.4142)}'`
+  gmtmath rawdata.txt -C0 -1023 ADD = rawd.txt
+  gmtmath -T1/2048/1 -N1/0 = samptime.txt
+  sample1d rawd.txt -Nsamptime.txt >sampRaw.txt
+  filter1d sampRaw.txt -F${filter}${LPfilt} -E > filtered.txt
+  spectrum1d filtered.txt -S${overlap} -i1 -Ndata > Spec_Long_Shore.txt
+  HIGShore=`gmtmath Spec_Long_Shore.txt -C1 SUM ${df} MUL SQRT 4 MUL = | awk 'END{printf("%2.2f",$2)}'`
+
+
+  DiffZsCrest=`echo "${ZSCrest}-$ZSCMES" | bc | awk 'END{printf("%2.2f",$1)}'`
+  DiffHigCrest=`echo "${HIGCrest}-${HIGCMES}" | bc | awk 'END{printf("%2.2f",$1)}'`
+  DiffHsCrest=`echo "${HSCrest}-${HSCMES}" | bc | awk 'END{printf("%2.2f",$1)}'`
+  DiffZsShore=`echo "${ZSShore}-$ZSSMES" | bc | awk 'END{printf("%2.2f",$1)}'`
+  DiffHigShore=`echo "${HIGShore}-${HIGSMES}" | bc | awk 'END{printf("%2.2f",$1)}'`
+  DiffHsShore=`echo "${HSShore}-${HSSMES}" | bc | awk 'END{printf("%2.2f",$1)}'`
+  printf "%2.2f\t%2.2f\t%2.2f\t%2.2f\t%2.2f\t%2.2f\n" ${DiffZsCrest} ${DiffHigCrest} ${DiffHsCrest} ${DiffZsShore} ${DiffHigShore} ${DiffHsShore} >> XBoutput.txt
+
+
+
+done
+
+# Now plot 6 scatter clouds showing the results

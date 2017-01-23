@@ -1,0 +1,447 @@
+#!/bin/bash
+#############################################
+
+title="RBF sensitivity analysis and best parameters"
+
+
+################################################################################
+################################################################################
+#make individual graphs
+gmtset FONT_ANNOT_PRIMARY 8p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+# gamma vs zs error
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i0,7`
+prjSP=-JX5.0c/4c
+xticks=a0.05f0.01+l"gamma"
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i0,7 -G200 -Bxa0.1f0.05+l"gamma" -Bya0.2f0.1 -BWS+t"zs error" -Y22  -P -K >$outfile
+#awk '{print($1,$8,1.0)}' RBF_results.txt | blockmean $regSP -I0.01/15 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($1,1.0,$8)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($1,1.0,$8)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($1,1.0,$8)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i0,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i0,8`
+xticks=a0.05f0.01+l"gamma"
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i0,8 -G200 -Bxa0.1f0.05+l"gamma" -Bya0.2f0.1 -BWS+t"Hig error" -X6.0c -O -K >>$outfile
+#awk '{print($1,$9,1.0)}' RBF_results.txt | blockmean $regSP -I0.01/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($1,1.0,$9)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($1,1.0,$9)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($1,1.0,$9)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i0,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i0,9`
+xticks=a0.05f0.01+l"gamma"
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i0,9 -G200 -Bxa0.1f0.05+l"gamma" -Bya0.2f0.1 -BWS+t"Hs error" -X6.0c -O -K >>$outfile
+#awk '{print($1,$10,1.0)}' RBF_results.txt | blockmean $regSP -I0.01/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($1,1.0,$10)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($1,1.0,$10)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($1,1.0,$10)}' RBF_results.txt | blockmean $regSP -I0.01/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i0,9 -G255/0/0 -O -K >>$outfile
+
+################################################################################
+
+regSP=`gmtinfo RBF_results.txt -I1/0.1 -i1,7`
+prjSP=-JX5.0c/4c
+xticks=a1f0.5+l"n"
+blocksize=0.5
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i1,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -Y-5 -X-12 -O -K >>$outfile
+#awk '{print($2,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($2,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($2,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($2,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i1,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I1/0.1 -i1,8`
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i1,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($2,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($2,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($2,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($2,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i1,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I1/0.1 -i1,9`
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i1,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($2,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($2,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($2,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($2,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i1,9 -G255/0/0 -O -K >>$outfile
+
+################################################################################
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i2,7`
+prjSP=-JX5.0c/4c
+xticks=a0.05f0.01+l"beta"
+blocksize=0.05
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i2,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -Y-5 -X-12 -O -K >>$outfile
+#awk '{print($3,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($3,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($3,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($3,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i2,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i2,8`
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i2,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($3,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($3,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($3,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($3,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i2,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i2,9`
+outfile=RBF-Scatter.ps
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i2,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($3,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($3,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($3,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($3,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i2,9 -G255/0/0 -O -K >>$outfile
+
+
+################################################################################
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i4,7`
+prjSP=-JX5.0c/4c
+xticks=a0.05f0.01+l"fw"
+blocksize=0.01
+
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i4,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -Y-5 -X-12 -O -K >>$outfile
+#awk '{print($5,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($5,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($5,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($5,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i4,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i4,8`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i4,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($5,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($5,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($5,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($5,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i4,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i4,9`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i4,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($5,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($5,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($5,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($5,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i4,9 -G255/0/0 -O -K >>$outfile
+
+
+psxy -R -J -T -O >> $outfile
+psconvert -A  -Tg -P $outfile
+
+
+################################################################################
+################################################################################
+## NEw Page
+
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i3,7`
+prjSP=-JX5.0c/4c
+xticks=a0.05f0.01+l"cf"
+outfile=RBF-Scatter_p2.ps
+blocksize=0.01
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i3,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS+t"zs error" -Y22  -P -K >$outfile
+#awk '{print($4,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($4,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($4,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($4,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i3,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i3,8`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i3,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS+t"Hig error" -X6.0c -O -K >>$outfile
+#awk '{print($4,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($4,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($4,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($4,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i3,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.1/0.1 -i3,9`
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i3,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS+t"Hs error" -X6.0c -O -K >>$outfile
+#awk '{print($4,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($4,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($4,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($4,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i3,9 -G255/0/0 -O -K >>$outfile
+
+################################################################################
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i5,7`
+prjSP=-JX5.0c/4c
+xticks=a0.1f0.05+l"smag"
+blocksize=0.05
+
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i5,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -Y-5 -X-12 -O -K >>$outfile
+#awk '{print($6,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($6,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($6,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($6,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i5,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i5,8`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i5,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($6,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($6,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($6,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($6,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i5,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i5,9`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i5,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($6,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($6,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($6,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($6,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i5,9 -G255/0/0 -O -K >>$outfile
+
+################################################################################
+
+regSP=`gmtinfo RBF_results.txt -I0.5/0.1 -i6,7`
+prjSP=-JX5.0c/4c
+xticks=a0.1f0.05+l"nuhfac"
+blocksize=0.1
+
+
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i6,7 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -Y-5 -X-12 -O -K >>$outfile
+#awk '{print($7,$8,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($7,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($7,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($7,1.0,$8)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i6,7 -G255/0/0 -O -K >>$outfile
+
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i6,8`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i6,8 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($7,$9,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($7,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($7,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($7,1.0,$9)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i6,8 -G255/0/0 -O -K >>$outfile
+
+regSP=`gmtinfo RBF_results.txt -I0.05/0.1 -i6,9`
+
+psxy $regSP $prjSP RBF_results.txt -Sc0.05 -i6,9 -G200 -Bx$xticks -Bya0.2f0.1 -BWS -X6.0c -O -K >>$outfile
+#awk '{print($7,$10,1.0)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 | psxy  -i0,1 $regSP $prjSP -W0.5p,blue -O -K>>$outfile
+awk '{print($7,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3)}'| psxy $regSP $prjSP -W0.3p,black -O -K>>$outfile
+awk '{print($7,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3+$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+awk '{print($7,1.0,$10)}' RBF_results.txt | blockmean $regSP -I${blocksize}/5 -E | awk '{print($1,$3-$4)}'| psxy $regSP $prjSP -W0.3p,blue -O -K>>$outfile
+psxy $regSP $prjSP RBF_best.txt -Sc0.05 -i6,9 -G255/0/0 -O -K >>$outfile
+
+
+psxy -R -J -T -O >> $outfile
+psconvert -A  -Tg -P $outfile
+
+
+exit 1;
+
+
+
+
+
+
+#
+#For each output variables plot 6 graphs
+
+
+pointsize=0.02c
+################################################################################
+################################################################################
+# zs shore
+outfile=RBF-ZsShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=7
+
+# gamma vs n
+regSP=`gmtinfo RBF_results.txt -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"zs Shore" -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"zs Shore" -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in zs at the shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+###################################################################################
+###################################################################################
+# Hs shore
+outfile=RBF-HsShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=9
+
+# gamma vs n
+regSP=`gmtinfo RBF_results.txt -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hs Shore" -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hs Shore" -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hs at the Shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+###################################################################################
+###################################################################################
+# Hi shore
+outfile=RBF-HiShore.ps
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica FONT_TITLE 12p,Helvetica-Bold FONT_LABEL 10p,Helvetica-Bold
+makecpt -Cjet -D  -T-0.5/0.5 > zsdiff.cpt
+
+Varpos=8
+
+# gamma vs n
+regSP=`gmtinfo RBF_results.txt -I0.1/1 -i0,1`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -Bxa0.05f0.01+l"gamma" -Bya0.5f0.1+l"n" -BWSen -Y3c -K -P > $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,1,${Varpos} -K -O >> $outfile
+
+# gamma vs beta
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,2`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,2 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.001+l"beta" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,2,${Varpos} -K -O >> $outfile
+
+# gamma vs cf
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,3`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,3 -Bxa0.05f0.01+l"gamma" -Bya0.01f0.005+l"cf" -BWSen -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,3,${Varpos} -K -O >> $outfile
+
+# gamma vs fw
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,4`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,4 -Bxa0.05f0.01+l"gamma" -Bya0.05f0.01+l"fw" -BWSen -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,4,${Varpos} -K -O >> $outfile
+
+# gamma vs smag
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,5`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,5 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"smag" -BWSen+t"Hig Shore" -Y8c -X-10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,5,${Varpos} -K -O >> $outfile
+
+# gamma vs nuhfac
+regSP=`gmtinfo RBF_results.txt -I0.1/0.01 -i0,6`
+prjSP=-JX6c/6c
+psxy RBF_best.txt $regSP $prjSP -Sc0.01c -G200 -i0,6 -Bxa0.05f0.01+l"gamma" -Bya0.1f0.05+l"nuhfac" -BWSen+t"Hig Shore" -X10c -K -O >> $outfile
+psxy RBF_results.txt $regSP $prjSP -Sc${pointsize} -Czsdiff.cpt -i0,6,${Varpos} -K -O >> $outfile
+
+psscale -DjRT+w10c/0.3c+e+ml+h -Czsdiff.cpt -R -J -Bxaf+l"Difference in Hig at the Shore [m]" -Y3c -X-3c -K -O >> $outfile
+
+psxy -R -J -T -O >> $outfile
+
+
+##############################################################################################################################
+## Find the best model output
+
+
+
+
+psconvert -P -TF -FRBF_result.pdf RBF-ZsShore.ps RBF-HsShore.ps RBF-HiShore.ps
